@@ -7,19 +7,19 @@ from os import path
 BLACKLIST = ['__pycache__', '.pyc']
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('homework')
+    parser.add_argument('project')
     parser.add_argument('utid')
     args = parser.parse_args()
 
     this_path = path.dirname(path.realpath(__file__))
     files = []
-    for f in glob.glob(path.join(args.homework, '**')):
+    for f in glob.glob(path.join(args.project, '**')):
         if all(b not in f for b in BLACKLIST):
             files.append(f)
 
     zf = zipfile.ZipFile(args.utid + '.zip', 'w', compression=zipfile.ZIP_DEFLATED)
     for f in files:
-        zf.write(f, f.replace(os.path.join(this_path, 'homework'), args.utid))
+        zf.write(f, f.replace(os.path.join(this_path, 'project'), args.utid))
     zf.close()
     size = os.path.getsize(args.utid + '.zip')
     if size > 10 * 1024 * 1024:
