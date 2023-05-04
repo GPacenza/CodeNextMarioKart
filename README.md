@@ -4,7 +4,7 @@ In this project we will implement an autonomous driving agent in SuperTuxKart (a
 
 # Setup and Starter Code
 
-The MarioKartStarterColab.ipynb file in this repo is the starter Colab notebook.
+The `MarioKartStarterColab.ipynb` file in this repo is the starter Colab notebook.
 
 The `project` folder contains starter code for the project.
 
