@@ -10,7 +10,7 @@ The `project` folder contains starter code for the project.
 
 # Project Breakdown
 
-This project consists of a few different components.
+This project consists of two main components: the controller and the planner.
 
 ## Controller
 
