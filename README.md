@@ -46,7 +46,10 @@ The planner is where deep learning comes in. In this part you will train a Convo
 
 We will use our controller to collect training data for your planner. WARNING: This creates a dataset in the folder drive_data. Make sure to back up any data that may be overwritten.
 
+```
 python -m homework.utils zengarden lighthouse hacienda snowtuxpeak cornfield_crossing scotland
+```
+
 You may experiment with the list of levels used to generate data, but we recommend this set. Adding additional levels may generate an unbalanced training set and lead to some issues with the test grader.
 
 You can visualize your training data with
