@@ -13,7 +13,7 @@ def train(args):
         train_logger = tb.SummaryWriter(path.join(args.log_dir, 'train'))
 
     """
-    Your code here, modify your HW4 code
+    Your code here
     Hint: Use the log function below to debug and visualize your model
     """
 
