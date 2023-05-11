@@ -7,6 +7,7 @@ def spatial_argmax(logit):
     Compute the soft-argmax of a heatmap
     :param logit: A tensor of size BS x H x W
     :return: A tensor of size BS x 2 the soft-argmax in normalized coordinates (-1 .. 1)
+    Note: BS stands for batch size, i.e. the number of images being processed in the batch of images
     """
     weights = F.softmax(logit.view(logit.size(0), -1), dim=-1).view_as(logit)
     return torch.stack(((weights.sum(1) * torch.linspace(-1, 1, logit.size(2)).to(logit.device)[None]).sum(1),
@@ -26,8 +27,9 @@ class Planner(torch.nn.Module):
         """
         Your code here
         Predict the aim point in image coordinate, given the supertuxkart image
-        @img: (B,3,96,128)
-        return (B,2)
+        @img: (BS,3,96,128)
+        return (BS,2)
+        Note: BS stands for batch size, i.e. the number of images being processed in the batch of images
         """
         raise NotImplementedError("Planner.forward")
 
