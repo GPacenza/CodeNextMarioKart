@@ -1,5 +1,6 @@
 import numpy as np
 import pystk
+import os
 
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms.functional as TF
@@ -92,6 +93,7 @@ class PyTux:
             self.k.start()
             self.k.step()
 
+        trace_name = track
         state = pystk.WorldState()
         track = pystk.Track()
 
@@ -99,7 +101,15 @@ class PyTux:
 
         if verbose:
             import matplotlib.pyplot as plt
+            import matplotlib.animation as animation
+            import cv2
+            import io
+            from PIL import Image
+
             fig, ax = plt.subplots(1, 1)
+            ax.cla()
+            if not os.path.exists("./results"):
+              os.mkdir("./results")
 
         for t in range(max_frames):
 
@@ -133,6 +143,7 @@ class PyTux:
                 action.rescue = True
 
             if verbose:
+                  
                 ax.clear()
                 ax.imshow(self.k.render_data[0].image)
                 WH2 = np.array([self.config.screen_width, self.config.screen_height]) / 2
@@ -141,10 +152,25 @@ class PyTux:
                 if planner:
                     ap = self._point_on_track(kart.distance_down_track + TRACK_OFFSET, track)
                     ax.add_artist(plt.Circle(WH2*(1+aim_point_image), 2, ec='g', fill=False, lw=1.5))
-                plt.pause(1e-3)
+                
+                # plt.pause(1e-3)
+                filename = "./results/file%02d.png" % t
+                plt.savefig(filename)
+                img = cv2.imread(filename)
+                if (t == 0):
+                  (h, w) = img.shape[:2]
+                  size = (w, h)
+                  fps = 15
+                  fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                  video = cv2.VideoWriter(f"./results/{trace_name}_drive.mp4", fourcc, fps, size, isColor=True)
+                  
+                video.write(img)
+                os.remove(filename)
 
             self.k.step(action)
             t += 1
+
+        video.release()
         return t, kart.overall_distance / track.length
 
     def close(self):
@@ -157,7 +183,7 @@ class PyTux:
         pystk.clean()
 
 
-if __name__ == '__main__':
+def main(pytux, tracks, n_images=10000, steps_per_track=20000, aim_noise_val=0.1, vel_noise_val=5, verbose=True):
     from .controller import control
     from argparse import ArgumentParser
     from os import makedirs
@@ -168,41 +194,44 @@ if __name__ == '__main__':
                        vel + np.random.randn() * vel_noise)
 
 
-    parser = ArgumentParser("Collects a dataset for the high-level planner")
-    parser.add_argument('track', nargs='+')
-    parser.add_argument('-o', '--output', default=DATASET_PATH)
-    parser.add_argument('-n', '--n_images', default=10000, type=int)
-    parser.add_argument('-m', '--steps_per_track', default=20000, type=int)
-    parser.add_argument('--aim_noise', default=0.1, type=float)
-    parser.add_argument('--vel_noise', default=5, type=float)
-    parser.add_argument('-v', '--verbose', action='store_true')
-    args = parser.parse_args()
+    # parser = ArgumentParser("Collects a dataset for the high-level planner")
+    # parser.add_argument('track', nargs='+')
+    # parser.add_argument('-o', '--output', default=DATASET_PATH)
+    # parser.add_argument('-n', '--n_images', default=10000, type=int)
+    # parser.add_argument('-m', '--steps_per_track', default=20000, type=int)
+    # parser.add_argument('--aim_noise', default=0.1, type=float)
+    # parser.add_argument('--vel_noise', default=5, type=float)
+    # parser.add_argument('-v', '--verbose', action='store_true')
+    # args = parser.parse_args()
     try:
-        makedirs(args.output)
+        makedirs(DATASET_PATH)
     except OSError:
         pass
-    pytux = PyTux()
-    for track in args.track:
-        n, images_per_track = 0, args.n_images // len(args.track)
+  
+    # pytux = PyTux()
+    for track in tracks:
+        global n
+        n, images_per_track = 0, n_images // len(tracks)
         aim_noise, vel_noise = 0, 0
 
 
         def collect(_, im, pt):
             from PIL import Image
             from os import path
+
             global n
             id = n if n < images_per_track else np.random.randint(0, n + 1)
             if id < images_per_track:
-                fn = path.join(args.output, track + '_%05d' % id)
+                fn = path.join(DATASET_PATH, track + '_%05d' % id)
                 Image.fromarray(im).save(fn + '.png')
                 with open(fn + '.csv', 'w') as f:
                     f.write('%0.1f,%0.1f' % tuple(pt))
             n += 1
 
 
-        while n < args.steps_per_track:
-            steps, how_far = pytux.rollout(track, noisy_control, max_frames=1000, verbose=args.verbose, data_callback=collect)
+        while n < steps_per_track:
+            steps, how_far = pytux.rollout(track, noisy_control, max_frames=1000, verbose=verbose, data_callback=collect)
             print(steps, how_far)
             # Add noise after the first round
-            aim_noise, vel_noise = args.aim_noise, args.vel_noise
+            aim_noise, vel_noise = aim_noise_val, vel_noise_val
     pytux.close()
