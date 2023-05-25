@@ -33,6 +33,7 @@ class Planner(torch.nn.Module):
               * Create a "unit" of 2-3 different layers, and repeat that a few (no more than three) times
                 throughout your network, varying the input/output dimensions each time
               * You generally want to increase the # of channels as you move through the network
+              # Google common CNN architectures and see how you might be able to replicate them with PyTorch.
         """
         self.network = torch.nn.Sequential()
 
