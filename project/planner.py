@@ -19,9 +19,9 @@ class Planner(torch.nn.Module):
         super().__init__()
 
         """
-        Your code here
+        Your code here. Fill in `torch.nn.Sequential()` with your network layers
         """
-        raise NotImplementedError('Planner.__init__')
+        self.network = torch.nn.Sequential()
 
     def forward(self, img):
         """
@@ -30,8 +30,15 @@ class Planner(torch.nn.Module):
         @img: (BS,3,96,128)
         return (BS,2)
         Note: BS stands for batch size, i.e. the number of images being processed in the batch of images
+              3 is the number of channels in the image (the RGB channels since it is a color image)
+              96 and 128 are the height and width of each image (96x128)
         """
-        raise NotImplementedError("Planner.forward")
+        # We run the input image through the network we created above.
+        x = self.network(img)
+        
+        # We take the output of our network and run it through a final activation function
+        # to give us probabilities for different possible aim points
+        return spatial_argmax(x[:, 0])
 
 
 def save_model(model):
