@@ -41,7 +41,7 @@ class Planner(torch.nn.Module):
         Predict the aim point in image coordinate, given the supertuxkart image
         @img: (BS,3,96,128)
         return (BS,2)
-        Note: BS stands for batch size
+        Note: BS stands for batch size, i.e. the number of images being processed
               3 is the number of channels in the image (the RGB channels since it is a color image)
               96 and 128 are the height and width of each image (96x128)
         """
