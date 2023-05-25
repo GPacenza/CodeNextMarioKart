@@ -19,7 +19,19 @@ class Planner(torch.nn.Module):
         super().__init__()
 
         """
-        Your code here. Fill in `torch.nn.Sequential()` with your network layers
+        Your code here. Fill in `torch.nn.Sequential()` with your network layers.
+        Tools/tips for building your network:
+              * Look at https://pytorch.org/docs/stable/nn.html for reference on the different
+                building blocks PyTorch gives you.
+              * This project implements a Convolutional Neural Network (CNN), so you'll want to
+                look for the module corresponding to a convolutional layer
+              * Any time you add a convolutional layer, follow it with a ReLU layer
+              * You'll want to use the "2d" variants of the different modules/layers
+              
+        Additional Tips
+              * Create a "unit" of 2-3 different layers, and repeat that a few (no more than three) times
+                throughout your network, varying the input/output dimensions each time
+              * You generally want to increase the # of channels as you move through the network
         """
         self.network = torch.nn.Sequential()
 
