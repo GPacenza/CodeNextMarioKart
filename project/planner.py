@@ -25,6 +25,7 @@ class Planner(torch.nn.Module):
                 building blocks PyTorch gives you.
               * This project implements a Convolutional Neural Network (CNN), so you'll want to
                 look for the module corresponding to a convolutional layer
+                    - Filter sizes are generallly 3x3, 5x5, 7x7
               * Any time you add a convolutional layer, follow it with a ReLU layer
               * You'll want to use the "2d" variants of the different modules/layers
               
