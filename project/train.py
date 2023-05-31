@@ -43,6 +43,8 @@ def train(args):
             loss_val = loss(pred, label)
 
             if train_logger is not None:
+                if global_step == 0:
+                  train_logger.add_graph(model._conv, img)
                 train_logger.add_scalar('loss', loss_val, global_step)
                 if global_step % 100 == 0:
                     import matplotlib.pyplot as plt
