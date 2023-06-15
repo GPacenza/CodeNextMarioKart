@@ -35,7 +35,23 @@ class Planner(torch.nn.Module):
               * You generally want to increase the # of channels as you move through the network
               # Google common CNN architectures and see how you might be able to replicate them with PyTorch.
         """
-        self.network = torch.nn.Sequential()
+        self.network = torch.nn.Sequential(
+          torch.nn.BatchNorm2d(3),
+          torch.nn.Conv2d(3, 16, 5, 2, 2),
+          torch.nn.ReLU(True),
+          torch.nn.BatchNorm2d(16),
+          torch.nn.Conv2d(16, 32, 5, 2, 2),
+          torch.nn.ReLU(True),
+          torch.nn.BatchNorm2d(32),
+          torch.nn.Conv2d(32, 32, 5, 2, 2),
+          torch.nn.ReLU(True),
+          torch.nn.BatchNorm2d(32),
+          torch.nn.Conv2d(32, 32, 5, 2, 2),
+          torch.nn.ReLU(True),
+          # Keep this as the last layer, but feel free to modify any of the 
+          # layers above!
+          torch.nn.Conv2d(32, 1, 1)
+        )
 
     def forward(self, img):
         """
